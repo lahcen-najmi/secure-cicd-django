@@ -16,11 +16,11 @@ pipeline {
         }
 
         stage('Installation des dépendances') {
-            steps { sh 'pip install -r requirements.txt' }
+            steps { sh 'python3 -m pip install -r requirements.txt' }
         }
 
         stage('Tests unitaires') {
-            steps { sh 'pytest --junitxml=reports/tests.xml' }
+            steps { sh 'python3 -m pytest --junitxml=reports/tests.xml' }
         }
 
         stage('Analyse SonarQube') {
