@@ -30,7 +30,7 @@ pipeline {
         stage('Analyse SonarQube') {
             steps {
                 withSonarQubeEnv('sonarqube-server') {
-                    sh 'sonar-scanner -Dsonar.projectKey=secure-cicd-django'
+                    sh "${tool 'SonarScanner'}/bin/sonar-scanner -Dsonar.projectKey=secure-cicd-django"
                 }
             }
         }
