@@ -5,6 +5,7 @@ pipeline {
         IMAGE_NAME = "secure-cicd-django-app"
         IMAGE_TAG  = "${env.BUILD_NUMBER}"
         REGISTRY   = "docker.io/lahcennajmi"
+        PATH       = "${WORKSPACE}/venv/bin:${env.PATH}"
     }
 
     stages {
@@ -16,11 +17,14 @@ pipeline {
         }
 
         stage('Installation des dépendances') {
-            steps { sh 'python3 -m pip install -r requirements.txt' }
+            steps {
+                sh 'python3 -m venv venv'
+                sh 'pip install -r requirements.txt'
+            }
         }
 
         stage('Tests unitaires') {
-            steps { sh 'python3 -m pytest --junitxml=reports/tests.xml' }
+            steps { sh 'pytest --junitxml=reports/tests.xml' }
         }
 
         stage('Analyse SonarQube') {
