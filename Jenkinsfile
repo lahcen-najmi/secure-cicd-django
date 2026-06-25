@@ -44,7 +44,7 @@ pipeline {
         }
 
         stage('Analyse Bandit (sécurité du code)') {
-            steps { sh 'bandit -r . -f txt -o reports/bandit.txt' }
+            steps { sh 'bandit -r . -x ./venv -f txt -o reports/bandit.txt' }
         }
 
         stage('Analyse OWASP Dependency-Check') {
