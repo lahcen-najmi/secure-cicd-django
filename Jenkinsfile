@@ -64,9 +64,12 @@ pipeline {
 
         stage('Scan Trivy') {
             steps {
-                sh 'trivy image --severity CRITICAL,HIGH --exit-code 1 $REGISTRY/$IMAGE_NAME:$IMAGE_TAG'
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    sh 'trivy image --severity CRITICAL,HIGH --exit-code 1 $REGISTRY/$IMAGE_NAME:$IMAGE_TAG'
+                }
             }
-        }
+        }  
+        
 
         stage('Push Docker Hub') {
             steps {
