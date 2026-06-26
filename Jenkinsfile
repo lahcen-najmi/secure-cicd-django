@@ -49,10 +49,15 @@ pipeline {
 
         stage('Analyse OWASP Dependency-Check') {
             steps {
-                sh 'dependency-check.sh --scan . --format HTML --out reports/'
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_KEY')]) {
+                        sh 'dependency-check.sh --scan . --format HTML --out reports/ --nvdApiKey $NVD_API_KEY'
+                    }
+                }
             }
         }
-
+            
+               
         stage('Build image Docker') {
             steps { sh 'docker build -t $REGISTRY/$IMAGE_NAME:$IMAGE_TAG .' }
         }
