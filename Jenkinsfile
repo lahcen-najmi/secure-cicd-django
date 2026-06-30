@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = "secure-cicd-django-app"
         IMAGE_TAG  = "${env.BUILD_NUMBER}"
-        REGISTRY   = "docker.io/lahcennajmi"
+        REGISTRY   = "docker.io/lnajmi"
         PATH       = "${WORKSPACE}/venv/bin:${env.PATH}"
     }
 
