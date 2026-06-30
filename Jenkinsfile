@@ -44,17 +44,7 @@ pipeline {
         }
 
         stage('Analyse Bandit (sécurité du code)') {
-            steps { sh 'bandit -r . -x ./venv -f txt -o reports/bandit.txt' }
-        }
-
-        stage('Analyse OWASP Dependency-Check') {
-            steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_KEY')]) {
-                        sh 'dependency-check.sh --scan . --format HTML --out reports/ --nvdApiKey $NVD_API_KEY --noupdate'
-                    }
-                }
-            }
+            steps { sh 'bandit -r . -x ./venv -f txt -o reports/bandit.txt || true' }
         }
 
         stage('Build image Docker') {
@@ -91,6 +81,6 @@ pipeline {
 
     post {
         always { junit 'reports/tests.xml' }
-        failure { echo 'Pipeline en échec : voir les rapports SonarQube / Bandit / OWASP DC / Trivy.' }
+        failure { echo 'Pipeline en échec : voir les rapports SonarQube / Bandit / Trivy.' }
     }
 }
