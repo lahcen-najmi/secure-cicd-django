@@ -8,7 +8,7 @@ def home(request):
     <body style="font-family: Arial, sans-serif; text-align: center; margin-top: 80px;">
         <h1>Pipeline CI/CD Securise avec Jenkins</h1>
         <p>Application Django deployee avec succes via le pipeline DevSecOps.</p>
-        <p>SonarQube - Bandit - OWASP Dependency-Check - Trivy</p>
+        <p>SonarQube - Bandit - Trivy</p>
     </body>
     </html>
     """
