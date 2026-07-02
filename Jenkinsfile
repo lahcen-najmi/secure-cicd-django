@@ -1,13 +1,11 @@
 pipeline {
     agent any
-
     environment {
         IMAGE_NAME = "secure-cicd-django-app"
         IMAGE_TAG  = "${env.BUILD_NUMBER}"
         REGISTRY   = "docker.io/lnajmi"
         PATH       = "${WORKSPACE}/venv/bin:${env.PATH}"
     }
-
     stages {
         stage('Checkout') {
             steps {
@@ -15,18 +13,15 @@ pipeline {
                 sh 'mkdir -p reports'
             }
         }
-
         stage('Installation des dépendances') {
             steps {
                 sh 'python3 -m venv venv'
                 sh 'pip install -r requirements.txt'
             }
         }
-
         stage('Tests unitaires') {
             steps { sh 'pytest --junitxml=reports/tests.xml' }
         }
-
         stage('Analyse SonarQube') {
             steps {
                 withSonarQubeEnv('sonarqube-server') {
@@ -34,7 +29,6 @@ pipeline {
                 }
             }
         }
-
         stage('Quality Gate') {
             steps {
                 timeout(time: 10, unit: 'MINUTES') {
@@ -42,15 +36,25 @@ pipeline {
                 }
             }
         }
-
         stage('Analyse Bandit (sécurité du code)') {
             steps { sh 'bandit -r . -x ./venv -f txt -o reports/bandit.txt || true' }
         }
-
+        stage('OWASP Dependency-Check') {
+            steps {
+                dependencyCheck(
+                    additionalArguments: '--scan . --exclude "./venv/**" --format XML --format HTML --out reports/',
+                    odcInstallation: 'OWASP-DC'
+                )
+            }
+            post {
+                always {
+                    dependencyCheckPublisher pattern: 'reports/dependency-check-report.xml'
+                }
+            }
+        }
         stage('Build image Docker') {
             steps { sh 'docker build -t $REGISTRY/$IMAGE_NAME:$IMAGE_TAG .' }
         }
-
         stage('Scan Trivy') {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
@@ -58,7 +62,6 @@ pipeline {
                 }
             }
         }
-
         stage('Push Docker Hub') {
             steps {
                 withCredentials([usernamePassword(
@@ -70,7 +73,6 @@ pipeline {
                 }
             }
         }
-
         stage('Déploiement') {
             steps {
                 sh 'docker rm -f django-app || true'
@@ -78,7 +80,6 @@ pipeline {
             }
         }
     }
-
     post {
         always { junit 'reports/tests.xml' }
         failure { echo 'Pipeline en échec : voir les rapports SonarQube / Bandit / Trivy.' }
