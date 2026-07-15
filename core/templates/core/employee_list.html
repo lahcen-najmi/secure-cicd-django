@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Employee Management</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+    body { background: #f5f5f5; padding: 40px; }
+    .btn {
+      background: #007bff; color: white; border: none;
+      padding: 10px 20px; border-radius: 4px;
+      font-size: 14px; cursor: pointer;
+      text-decoration: none; display: inline-block; margin-bottom: 24px;
+    }
+    .btn:hover { background: #0056b3; }
+    h1 { font-size: 28px; margin-bottom: 20px; color: #111; }
+    table { width: 100%; border-collapse: collapse; background: white; }
+    thead tr { background: #1a1a2e; color: white; }
+    th, td { padding: 12px 16px; text-align: left; font-size: 14px; }
+    tbody tr:nth-child(even) { background: #f9f9f9; }
+    tbody tr:hover { background: #eef4ff; }
+  </style>
+</head>
+<body>
+  <a href="{% url 'add_employee' %}" class="btn">Add Employee</a>
+  <h1>Employee Management</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th><th>First Name</th><th>Last Name</th>
+        <th>Email</th><th>Position</th><th>Salary</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for emp in employees %}
+      <tr>
+        <td>{{ emp.id }}</td>
+        <td>{{ emp.first_name }}</td>
+        <td>{{ emp.last_name }}</td>
+        <td>{{ emp.email }}</td>
+        <td>{{ emp.position }}</td>
+        <td>{{ emp.salary }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="6" style="text-align:center;padding:20px;">
+          Aucun employé
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
